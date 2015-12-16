@@ -11,30 +11,32 @@ session = Session()
 Base = declarative_base()
 
 class Item(Base):
-    __tablename__ = "items"
+    __tablename__ = "item"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String)
     start_time = Column(DateTime, default=datetime.utcnow)
-    owner_id = Column(Integer, ForeignKey('User.id'), nullable=False)
+    owner_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     bids = relationship("Bid", uselist=True, backref="item")
     
     
 class User(Base):
-    __tablename__ = "Users"
+    __tablename__ = "user"
     
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    password = Column
+    password = Column(String, nullable=False)
     items = relationship("Item", uselist=True, backref="owner")
+    bids = relationship("Bid", backref = "bidder")
     
 class Bid(Base):
-    __tablename__ = "Bids"
+    __tablename__ = "bid"
     
     id = Column(Integer, primary_key=True)
     price = Column(Float, nullable=False)
-    item_id = Column(Integer, ForeignKey('Item.id'), nullable=False)
+    item_id = Column(Integer, ForeignKey('item.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
 Base.metadata.create_all(engine)
 
